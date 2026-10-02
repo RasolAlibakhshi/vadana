@@ -1,0 +1,75 @@
+{
+  "name": "vadana_hozor",
+  "version": "1.0.0",
+  "description": "For the amazing students of Islamic Azad University in Iran",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac"
+  },
+  "keywords": [
+    "Islamic",
+    "Azad",
+    "University"
+  ],
+  "author": "Rasoul Alibakhshi",
+  "license": "ISC",
+  "overrides": {
+    "@noble/hashes": "1.4.0"
+  },
+  "build": {
+    "appId": "ir.iau.vadanahozor",
+    "productName": "Vadana Hozor",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.utilities"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "dependencies": {
+    "node-cron": "^4.6.0",
+    "playwright": "^1.63.0"
+  },
+  "devDependencies": {
+    "electron": "^41.7.1",
+    "electron-builder": "24.13.3"
+  }
+}

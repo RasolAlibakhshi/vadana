@@ -1,0 +1,63 @@
+<!doctype html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="utf-8" />
+  <title>اتوماسیون Playwright - مدیریت زمان‌بندی</title>
+  <style>
+    * { box-sizing: border-box; font-family: Tahoma, 'Vazirmatn', sans-serif; }
+    body { margin: 20px; background-color: #f4f6f8; }
+    .container { display: flex; gap: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex: 1; }
+    .row { display: flex; gap: 10px; }
+    .row > div { flex: 1; }
+    input, textarea, button { width: 100%; margin-bottom: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+    textarea { height: 200px; font-family: Consolas, monospace; direction: ltr; }
+    button { background: #007bff; color: #fff; border: none; cursor: pointer; font-weight: bold; }
+    button:hover { background: #0056b3; }
+    .btn-run { background: #28a745; width: auto; margin-right: 5px; }
+    .btn-del { background: #dc3545; width: auto; }
+    pre { background: #1e1e1e; color: #39ff14; padding: 12px; height: 180px; overflow-y: auto; border-radius: 5px; direction: ltr; text-align: left; }
+    ul { list-style: none; padding: 0; }
+    li { background: #e9ecef; margin-bottom: 8px; padding: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+  </style>
+</head>
+<body>
+  <h2>سامانه ثبت و اجرای خودکار فرآیند مرورگر</h2>
+  <div class="container">
+    <div class="card">
+      <h3>تعریف کار جدید</h3>
+      <label>عنوان فرآیند:</label>
+      <input type="text" id="name" placeholder="مثلاً: ورود به وادانا" />
+
+      <label>تاریخ و ساعت اجرا:</label>
+      <input type="datetime-local" id="runAt" />
+
+      <div class="row">
+        <div>
+          <label>مکث بین هر مرحله (میلی‌ثانیه):</label>
+          <input type="number" id="slowMo" value="800" min="0" step="100" />
+        </div>
+        <div>
+          <label>زمان باز ماندن در پایان (ثانیه):</label>
+          <input type="number" id="closeDelay" value="15" min="0" />
+        </div>
+      </div>
+
+      <label>کد خام ضبط‌شده Playwright:</label>
+      <textarea id="script" placeholder="کد خروجی codegen را اینجا پیست کنید..."></textarea>
+
+      <button id="create">ثبت و زمان‌بندی</button>
+    </div>
+
+    <div class="card">
+      <h3>وظایف ثبت شده</h3>
+      <ul id="jobs"></ul>
+
+      <h3>گزارش وضعیت و لاگ‌ها</h3>
+      <pre id="logs"></pre>
+    </div>
+  </div>
+
+  <script src="./ui.js"></script>
+</body>
+</html>
