@@ -133,6 +133,7 @@ async function runJob(job) {
   const closeDelay = getNumber(job.closeDelay, 15, 86400);
 
   let browser;
+  let context;
   let outcome;
 
   log(`🚀 شروع اجرای برنامه: ${job.name}`);
@@ -144,7 +145,7 @@ async function runJob(job) {
       slowMo
     });
 
-    const context = await browser.newContext();
+    context = await browser.newContext();
     const page = await context.newPage();
 
     const scriptPath = path.resolve(job.scriptPath);
@@ -196,6 +197,15 @@ async function runJob(job) {
       }
 
       try {
+        if (context) {
+          for (const p of context.pages()) {
+            await p.evaluate(() => localStorage.clear()).catch(() => {});
+          }
+
+          await context.clearCookies().catch(() => {});
+          await context.close().catch(() => {});
+        }
+
         await browser.close();
         log('🚪 مرورگر بسته شد.');
       } catch (error) {
@@ -298,12 +308,10 @@ function createWindow() {
   });
 }
 
-// دریافت فهرست کارها
 ipcMain.handle('jobs:list', async () => {
   return loadJobs();
 });
 
-// ایجاد و زمان‌بندی کار جدید
 ipcMain.handle('jobs:create', async (_event, payload = {}) => {
   if (!payload.script || typeof payload.script !== 'string') {
     throw new Error('کد Playwright وارد نشده است.');
@@ -350,7 +358,7 @@ ipcMain.handle('jobs:create', async (_event, payload = {}) => {
       typeof payload.name === 'string' && payload.name.trim()
         ? payload.name.trim()
         : 'وظیفه جدید',
-    
+
     runAt: parsedRunAt.toISOString(),
     slowMo: getNumber(payload.slowMo, 800, 10000),
     closeDelay: getNumber(payload.closeDelay, 15, 86400),
@@ -365,7 +373,6 @@ ipcMain.handle('jobs:create', async (_event, payload = {}) => {
   return job;
 });
 
-
 ipcMain.handle('jobs:runOnce', async (_event, jobId) => {
   const job = loadJobs().find(item => item.id === jobId);
 
@@ -375,7 +382,6 @@ ipcMain.handle('jobs:runOnce', async (_event, jobId) => {
 
   return runJob(job);
 });
-
 
 ipcMain.handle('jobs:delete', async (_event, jobId) => {
   const jobs = loadJobs();
@@ -409,7 +415,6 @@ ipcMain.handle('jobs:delete', async (_event, jobId) => {
 app.whenReady().then(() => {
   ensureDataDirs();
   createWindow();
-
 
   for (const job of loadJobs()) {
     scheduleJob(job);
